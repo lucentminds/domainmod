@@ -85,7 +85,7 @@ class GoDaddy
 
                 $domain_list[] = $domain['domain'];
                 $domain_count++;
-
+                
             }
 
         } else {
