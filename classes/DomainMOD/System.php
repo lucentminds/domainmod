@@ -23,32 +23,13 @@ namespace DomainMOD;
 
 class System
 {
+    public $deeb;
     public $log;
 
     public function __construct()
     {
+        $this->deeb = Database::getInstance();
         $this->log = new Log('class.system');
-    }
-
-    public function db()
-    {
-        // Test database connection settings.
-        try
-        {
-            $pdo = new \PDO("mysql:host=" . DB_HOSTNAME . ";dbname=" . DB_NAME . ";charset=utf8", DB_USERNAME, DB_PASSWORD);
-        }
-        catch( \PDOException $e )
-        {
-            exit( 'Failed to connect to database.'
-                .' Please check your config settings. '
-                . $e->getMessage() );
-        }
-
-        $pdo->exec("SET NAMES utf8");
-        $pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
-        $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
-        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        return $pdo;
     }
 
     public function installCheck()
@@ -74,12 +55,12 @@ class System
 
     public function checkForSettingsTable()
     {
-        return $this->db()->query("SHOW TABLES LIKE 'settings'")->fetchColumn();
+        return $this->deeb->cnxx->query("SHOW TABLES LIKE 'settings'")->fetchColumn();
     }
 
     public function checkVersion($current_version)
     {
-        $pdo = $this->db();
+        $pdo = $this->deeb->cnxx;
         $live_version = $this->getLiveVersion();
 
         if ($current_version < $live_version && $live_version != '') {
@@ -130,7 +111,7 @@ class System
 
     public function getDbVersion()
     {
-        return $this->db()->query("
+        return $this->deeb->cnxx->query("
             SELECT db_version
             FROM settings")->fetchColumn();
     }
@@ -166,7 +147,7 @@ class System
 
     public function checkForRows($sql)
     {
-        $result = $this->db()->query($sql)->fetchColumn();
+        $result = $this->deeb->cnxx->query($sql)->fetchColumn();
         if (!$result) {
             return '0';
         } else {
@@ -212,7 +193,7 @@ class System
 
     public function getDebugMode()
     {
-        $pdo = $this->db();
+        $pdo = $this->deeb->cnxx;
         $result = $this->checkForSettingsTable();
         if (!$result) return '0';
         $stmt = $pdo->query("SHOW COLUMNS FROM `settings` LIKE 'debug_mode'");
@@ -274,7 +255,7 @@ class System
 
     public function getCreationType($creation_type_id)
     {
-        $pdo = $this->db();
+        $pdo = $this->deeb->cnxx;
         $stmt = $pdo->prepare("
             SELECT `name`
             FROM creation_types
@@ -299,7 +280,7 @@ class System
 
     public function getCreationTypeId($creation_type)
     {
-        $pdo = $this->db();
+        $pdo = $this->deeb->cnxx;
         $stmt = $pdo->prepare("
             SELECT id
             FROM creation_types
