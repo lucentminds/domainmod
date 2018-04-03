@@ -86,9 +86,10 @@ class Smtp
                     'message' => substr( $message_text, 0, 20 )
                 ) );
 
-        $log_extra = array('To' => $to_address, 'From' => $email_address, 'Subject' => $subject, 'Server' => $server,
-            'Port' => $port, 'Protocol' => $protocol, 'Username' => $this->format->obfusc($username),
-            'Password' => $this->format->obfusc($password), 'CharSet' => EMAIL_ENCODING_TYPE);
+        $log_extra = array('Method' => 'SMTP', 'To' => $to_address, 'From' => $email_address, 'Subject' => $subject,
+            'Server' => $server, 'Port' => $port, 'Protocol' => $protocol,
+            'Username' => $this->format->obfusc($username), 'Password' => $this->format->obfusc($password),
+            'CharSet' => EMAIL_ENCODING_TYPE);
 
         if ($mail->send()) {
 
